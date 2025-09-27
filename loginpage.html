@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>स्मार्ट क्रॉप — लॉगिन व प्रोफ़ाइल</title>
+  <style>
+    :root{
+      --accent: #2b8a3e;
+      --muted: #6b7280;
+      --bg-overlay: rgba(0,0,0,0.45);
+      --card-bg: rgba(255,255,255,0.92);
+      --glass: rgba(255,255,255,0.08);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    .bg-wrap{position:fixed;inset:0;z-index:-1;overflow:hidden;}
+    .bg-wrap::before{
+      content:'';position:absolute;inset:0;
+      background: url('https://www.farminstitute.org.au/wp-content/uploads/2020/10/Dennis-Jarvis-farm-Vietnam--2048x1360.jpg') center/cover no-repeat;
+      filter: saturate(0.95) contrast(0.95) brightness(0.75);
+      transform: scale(1.02);
+    }
+    .bg-overlay{position:fixed;inset:0;background:var(--bg-overlay);z-index:0}
+
+    .page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;color:#0f172a;}
+
+    /* Improved card styling */
+    .card{
+      width:100%;max-width:420px;background:var(--card-bg);border-radius:20px;padding:36px;
+      box-shadow:0 12px 40px rgba(2,6,23,0.25);backdrop-filter: blur(12px);
+      display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;
+    }
+
+    .card h1{margin:0;font-size:1.5rem;color:#1e293b}
+    .card p.lead{margin:0;color:var(--muted);font-size:0.95rem}
+
+    .field{display:flex;flex-direction:column;width:100%;text-align:left;margin-bottom:16px}
+    label{font-size:0.85rem;margin-bottom:6px;color:var(--muted)}
+    input[type="text"],input[type="password"]{padding:12px 14px;border-radius:12px;border:1px solid #e6e9ef;font-size:0.95rem;outline:none;transition:all .2s}
+    input:focus{box-shadow:0 0 0 3px rgba(43,138,62,0.15);border-color:var(--accent)}
+
+    .cta{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:10px}
+    .btn{background:var(--accent);color:white;padding:12px 14px;border-radius:12px;border:0;cursor:pointer;font-weight:600;transition:background .2s}
+    .btn:hover{background:#237132}
+    .btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+    .btn.ghost:hover{background:rgba(43,138,62,0.08)}
+
+    .muted-small{font-size:0.82rem;color:var(--muted)}
+
+    .profile-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:26px;max-width:780px;width:100%;}
+    .profile-card{display:flex;gap:20px;align-items:center;background:var(--card-bg);padding:24px;border-radius:20px;box-shadow:0 10px 30px rgba(2,6,23,0.18)}
+    .avatar{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#ecfccb);display:flex;align-items:center;justify-content:center;font-weight:700;color:#065f46;font-size:1.3rem}
+    .meta h2{margin:0;font-size:1.2rem}
+    .meta p{margin:6px 0 0 0;color:var(--muted)}
+
+    .stats{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+    .stat{background:var(--glass);padding:12px 16px;border-radius:12px;text-align:center;flex:1;min-width:120px}
+    .stat b{display:block;font-size:1.05rem;color:#ffffff}
+
+    @media (max-width:640px){
+      .card{padding:24px}
+      .profile-card{flex-direction:column;align-items:center;text-align:center}
+      .avatar{width:84px;height:84px}
+    }
+
+    a.link{color:var(--accent);text-decoration:none;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="bg-wrap" aria-hidden="true"></div>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- लॉगिन पेज -->
+  <main id="loginPage" class="page" role="main">
+    <div class="card" aria-labelledby="loginTitle">
+      <h1 id="loginTitle">स्मार्ट क्रॉप एडवाइजरी</h1>
+      <p class="lead">अपनी व्यक्तिगत फसल सलाह पाने के लिए साइन इन करें</p>
+
+      <form id="loginForm" onsubmit="return handleLogin(event)" style="width:100%;margin-top:10px">
+        <div class="field">
+          <label for="email">ईमेल</label>
+          <input id="email" type="text" placeholder="आपका@फार्ममेल.कॉम" required>
+        </div>
+
+        <div class="field">
+          <label for="password">पासवर्ड</label>
+          <input id="password" type="password" placeholder="पासवर्ड दर्ज करें" required>
+        </div>
+
+        <div class="cta">
+          <button class="btn" type="submit">लॉगिन</button>
+          <button type="button" class="btn ghost" onclick="demoLogin()">डेमो लॉगिन</button>
+        </div>
+      </form>
+
+      <p class="muted-small">पासवर्ड भूल गए? <a href="#" class="link">रीसेट करें</a></p>
+      <p class="muted-small">नए हैं? <a href="#" class="link">एडमिन से संपर्क करें</a></p>
+    </div>
+  </main>
+
+  <!-- प्रोफ़ाइल पेज -->
+  <main id="profilePage" class="page" style="display:none;">
+    <div class="profile-wrap">
+      <div style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <h1 style="margin:0;color:white;text-shadow:0 3px 10px rgba(0,0,0,0.4)">स्मार्ट क्रॉप में आपका स्वागत है</h1>
+        <div>
+          <button class="btn" onclick="logout()">लॉगआउट</button>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="avatar" aria-hidden="true">क</div>
+        <div class="meta">
+          <h2>किसान: रश्मि</h2>
+          <p>छोटे किसान</p>
+          <p style="margin-top:8px;color:var(--muted);font-size:0.9rem">सदस्य: 2025 से • अंतिम सलाह: 3 दिन पहले</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><small class="muted-small">खेती का क्षेत्र</small><b>2.5 हेक्टेयर</b></div>
+        <div class="stat"><small class="muted-small">अनुशंसित फसलें</small><b>मक्का, दालें</b></div>
+        <div class="stat"><small class="muted-small">मिट्टी की गुणवत्ता</small><b>मध्यम</b></div>
+      </div>
+
+      <div style="width:100%;max-width:720px;margin-top:18px;background:var(--card-bg);padding:20px;border-radius:16px;">
+        <h3 style="margin:0 0 8px 0">ताज़ा सलाह</h3>
+        <p style="margin:0;color:var(--muted)">मौजूदा मौसम और मिट्टी के आँकड़ों के आधार पर, नाइट्रोजन की मात्रा 15% कम करें और जल्दी बुवाई पर विचार करें ताकि फूलने के समय गर्मी से बचा जा सके।</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function demoLogin(){
+      document.getElementById('email').value = 'mukesh@demo.com';
+      document.getElementById('password').value = 'password';
+      handleLogin();
+    }
+    function handleLogin(e){
+      if(e && e.preventDefault) e.preventDefault();
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('profilePage').style.display = '';
+      return false;
+    }
+    function logout(){
+      document.getElementById('profilePage').style.display = 'none';
+      document.getElementById('loginPage').style.display = '';
+    }
+  </script>
+</body>
+</html>

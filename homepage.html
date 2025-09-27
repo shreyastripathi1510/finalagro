@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Crop Advisory</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: url('https://www.farminstitute.org.au/wp-content/uploads/2020/10/Dennis-Jarvis-farm-Vietnam--2048x1360.jpg') center/cover no-repeat;
+      color: #1f2937;
+    }
+
+        /* Header Styling */
+    header {
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    position: relative;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    }
+
+    header .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    header .logo {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2e7d32;
+    font-size: 18px;
+    font-weight: bold;
+    }
+
+    header .title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    }
+
+    header .actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    }
+
+    header .actions i {
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    }
+    header .actions i:hover {
+    transform: scale(1.1);
+    }
+
+
+    .container {
+      padding: 20px 16px 90px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1b5e20;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* List Items */
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .item:last-child { border-bottom: none; }
+
+    .item-title { font-size: 15px; font-weight: 600; color: #111827; }
+    .item-sub { font-size: 13px; color: #6b7280; }
+
+    /* Status Badge */
+    .status-badge {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Button */
+    .btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #256628; }
+
+    /* Price Items */
+    .price-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+    }
+    .price-item:last-child { border-bottom: none; }
+
+    /* Navigation Bar */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    nav button.active,
+    nav button:hover {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+    nav button i { font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <header>
+  <div class="logo-area">
+    <div class="logo"><i class="fa-solid fa-leaf"></i></div>
+    <div class="title">Smart Crop Advisory</div>
+  </div>
+  <div class="actions">
+    <i class="fa-solid fa-bell"></i>
+    <i class="fa-solid fa-gear"></i>
+  </div>
+  </header>
+
+  <div class="container">
+    <!-- Crops Section -->
+    <div class="card" id="crops-card">
+      <h2><i class="fa-solid fa-seedling"></i> मेरी फसलें</h2>
+      <div id="crops-list"></div>
+      <button class="btn" onclick="addCrop()">+ नई फसल जोड़ें</button>
+    </div>
+
+    <!-- Schemes Section -->
+    <div class="card" id="schemes-card">
+      <h2><i class="fa-solid fa-file-contract"></i> सरकारी योजनाएं</h2>
+      <div id="schemes-list"></div>
+    </div>
+
+    <!-- Prices Section -->
+    <div class="card" id="prices-card">
+      <h2><i class="fa-solid fa-coins"></i> आज के भाव</h2>
+      <div id="prices-list"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav>
+    <button class="active"><i class="fa-solid fa-house"></i>होम</button>
+    <button><i class="fa-solid fa-seedling"></i>फसलें</button>
+    <button><i class="fa-solid fa-file-contract"></i>योजनाएं</button>
+    <button><i class="fa-solid fa-coins"></i>मंडी भाव</button>
+    <button><i class="fa-solid fa-user"></i><a href="loginpage.html" >प्रोफ़ाइल</button>
+  </nav>
+
+  <script>
+    // Dynamic Data
+    let crops = [
+      { name: "गेहूं", status: "कटाई पूर्ण" },
+      { name: "धान", status: "बुवाई जारी" }
+    ];
+
+    let schemes = [
+      { title: "PM किसान सम्मान निधि", details: "₹6000/साल • अंतिम तिथि: 31/03/2024" },
+      { title: "फसल बीमा योजना", details: "अंतिम तिथि: 15/04/2024" }
+    ];
+
+    let prices = [
+      { crop: "गेहूं", price: "₹5200/क्विंटल" },
+      { crop: "धान", price: "₹2100/क्विंटल" },
+      { crop: "सरसों", price: "₹4500/क्विंटल" }
+    ];
+
+    // Render Crops
+    function renderCrops() {
+      const cropsList = document.getElementById("crops-list");
+      cropsList.innerHTML = "";
+      crops.forEach(crop => {
+        cropsList.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-title">${crop.name}</div>
+              <div class="status-badge">${crop.status}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Render Schemes
+    function renderSchemes() {
+      const schemesList = document.getElementById("schemes-list");
+      schemesList.innerHTML = "";
+      schemes.forEach(scheme => {
+        schemesList.innerHTML += `
+          <div class="item">
+            <div>
+              <div class="item-title">${scheme.title}</div>
+              <div class="item-sub">${scheme.details}</div>
+            </div>
+            <button class="btn">आवेदन करें</button>
+          </div>
+        `;
+      });
+    }
+
+    // Render Prices
+    function renderPrices() {
+      const pricesList = document.getElementById("prices-list");
+      pricesList.innerHTML = "";
+      prices.forEach(p => {
+        pricesList.innerHTML += `
+          <div class="price-item">
+            <span>${p.crop}</span>
+            <span>${p.price}</span>
+          </div>
+        `;
+      });
+    }
+
+    // Add New Crop
+    function addCrop() {
+      const name = prompt("नई फसल का नाम दर्ज करें:");
+      const status = prompt("फसल की स्थिति दर्ज करें:");
+      if(name && status) {
+        crops.push({ name, status });
+        renderCrops();
+      }
+    }
+
+    // Initial Render
+    renderCrops();
+    renderSchemes();
+    renderPrices();
+  </script>
+</body>
+</html>
